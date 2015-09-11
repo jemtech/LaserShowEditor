@@ -33,8 +33,6 @@ public class LSDisplay extends JFrame {
 
 		lsdp = new LSDisplayPanel();
         setContentPane(lsdp);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
 		setSize(800, 800);
 		setVisible(true);
@@ -90,7 +88,7 @@ public class LSDisplay extends JFrame {
 	 * @return
 	 */
 	private int tICToPOD(int coordinate){
-		return (int) ((coordinate + 32768) * zoom);
+		return 800 - (int) ((coordinate + 32768) * zoom);
 	}
 	
 }
