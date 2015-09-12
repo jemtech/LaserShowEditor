@@ -24,7 +24,7 @@ public class LSDisplay extends JFrame {
 	
 	public void setFrame(Frame frameToDisplay){
 		this.frameToDisplay = frameToDisplay;
-		lsdp.repaint();
+		this.repaint();
 	}
 	
 	public LSDisplay(){
@@ -46,6 +46,7 @@ public class LSDisplay extends JFrame {
 
 		public void paintComponent(Graphics g){
 			//black backround
+			g.clearRect(0, 0, 800, 800);
 			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, 800, 800);
 			paintFrame(g);
@@ -75,7 +76,6 @@ public class LSDisplay extends JFrame {
 					g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue()));
 			        g2d.setStroke(normalStroke);
 				}
-				System.out.println(tICToPOD(lastCoordinate.getX()) + ":" + tICToPOD(lastCoordinate.getY()));
 				g2d.drawLine(tICToPOD(lastCoordinate.getX()), tICToPOD(lastCoordinate.getY()), tICToPOD(coordinate.getX()), tICToPOD(coordinate.getY()));
 			}
 			lastCoordinate = coordinate;

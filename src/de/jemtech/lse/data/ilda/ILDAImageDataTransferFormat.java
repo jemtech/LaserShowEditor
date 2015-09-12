@@ -19,6 +19,12 @@ public class ILDAImageDataTransferFormat {
 	static char ILDA_2D_COORD_TRUE_COL_HEADER_TYPE = 0x05;
 	static char HEADER_START[] = {'I','L','D','A',0x00,0x00,0x00};
 	
+	private List<LoadingListener> loadingListeners = new LinkedList<LoadingListener>();
+	
+	public void addLoadingListener(ILDAImageDataTransferFormat.LoadingListener loadingListener){
+		loadingListeners.add(loadingListener);
+	}
+	
 	public List<Frame> parse(String path) throws IOException{
 		File file = new File(path);
 		if(!file.exists()){
@@ -128,6 +134,11 @@ public class ILDAImageDataTransferFormat {
 						frame = null;
 					}
 					if(frame != null){
+						if(loadingListeners != null && !loadingListeners.isEmpty()){
+							for(LoadingListener listener : loadingListeners){
+								listener.newFrameLoaded(frame);
+							}
+						}
 						frames.add(frame);
 					}
 					//data is parsed start again
@@ -557,4 +568,8 @@ public class ILDAImageDataTransferFormat {
 	{ 11, 11, 11 },
 	{ 0, 0, 0 } // Black
 	};
+	
+	public interface LoadingListener{
+		public void newFrameLoaded(Frame frame);
+	}
 }
