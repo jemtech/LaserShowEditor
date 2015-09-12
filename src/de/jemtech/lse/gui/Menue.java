@@ -101,6 +101,82 @@ public class Menue extends JFrame {
         c.gridwidth = 2;
         pane.add(playButton,c);
         
+        JButton zoomInButton = new JButton("+");
+        zoomInButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				lsFramedisplay.setZoom(lsFramedisplay.getZoom() * 1.1f);
+			}
+		});
+        c.gridx = 0;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        pane.add(zoomInButton,c);
+        
+        JButton zoomOutButton = new JButton("-");
+        zoomOutButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				lsFramedisplay.setZoom(lsFramedisplay.getZoom() * 0.9f);
+			}
+		});
+        c.gridx = 1;
+        c.gridy = 4;
+        pane.add(zoomOutButton,c);
+        
+        JButton centerUpButton = new JButton("\u2191");
+        centerUpButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				lsFramedisplay.moveUp();
+			}
+		});
+        c.gridx = 0;
+        c.gridy = 5;
+        c.gridwidth = 2;
+        pane.add(centerUpButton,c);
+
+        JButton centerLeftButton = new JButton("\u2190");
+        centerLeftButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				lsFramedisplay.moveLeft();
+			}
+		});
+        c.gridx = 0;
+        c.gridy = 6;
+        c.gridwidth = 1;
+        pane.add(centerLeftButton,c);
+
+        JButton centerRightButton = new JButton("\u2192");
+        centerRightButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				lsFramedisplay.moveRigth();
+			}
+		});
+        c.gridx = 1;
+        c.gridy = 6;
+        pane.add(centerRightButton,c);
+        
+        JButton centerDownButton = new JButton("\u2193");
+        centerDownButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				lsFramedisplay.moveDown();
+			}
+		});
+        c.gridx = 0;
+        c.gridy = 7;
+        c.gridwidth = 2;
+        pane.add(centerDownButton,c);
+        
         pack();
 		setVisible(true);
 	}

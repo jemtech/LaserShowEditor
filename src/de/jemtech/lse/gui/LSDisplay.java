@@ -76,19 +76,54 @@ public class LSDisplay extends JFrame {
 					g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue()));
 			        g2d.setStroke(normalStroke);
 				}
-				g2d.drawLine(tICToPOD(lastCoordinate.getX()), tICToPOD(lastCoordinate.getY()), tICToPOD(coordinate.getX()), tICToPOD(coordinate.getY()));
+				g2d.drawLine(tICToPOD(lastCoordinate.getX()+xCenter), tICToPOD(lastCoordinate.getY()+yCenter), tICToPOD(coordinate.getX()+xCenter), tICToPOD(coordinate.getY()+yCenter));
 			}
 			lastCoordinate = coordinate;
 		}
 	}
-	float zoom = 800.0f / 65536.0f;
+	
+	public float getZoom(){
+		return zoom;
+	}
+	
+	public void setZoom(float zoom){
+		if(zoom <= 0.0f){
+			System.err.println("zoom can't be <= 0");
+		}
+		this.zoom = zoom;
+		this.repaint();
+	}
+	private int xCenter = 0;
+	private int yCenter = 0;
+	
+	public void moveRigth(){
+		xCenter += 10 * (1/zoom) + 0.5;
+		this.repaint();
+	}
+	
+	public void moveLeft(){
+		xCenter -= 10 * (1/zoom) + 0.5;
+		this.repaint();
+	}
+	
+	public void moveUp(){
+		yCenter -= 10 * (1/zoom) + 0.5;
+		this.repaint();
+	}
+	
+	public void moveDown(){
+		yCenter += 10 * (1/zoom) + 0.5;
+		this.repaint();
+	}
+	
+	private float zoom = 800.0f / 65536.0f;
 	/**
 	 * translate ILDA coordinate to point on display
 	 * @param coordinate
 	 * @return
 	 */
 	private int tICToPOD(int coordinate){
-		return 800 - (int) ((coordinate + 32768) * zoom);
+		return 400 - (int) (coordinate * zoom);
 	}
 	
 }
