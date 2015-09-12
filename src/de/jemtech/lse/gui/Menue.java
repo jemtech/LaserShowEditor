@@ -1,6 +1,5 @@
 package de.jemtech.lse.gui;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -31,7 +30,8 @@ public class Menue extends JFrame {
         JPanel pane = new JPanel(new GridBagLayout());
         setContentPane(pane);
         GridBagConstraints c = new GridBagConstraints();
-        
+        c.anchor = GridBagConstraints.CENTER;
+        c.weightx = 1.0;
         JButton loadButton = new JButton("load file");
         loadButton.addActionListener(new ActionListener() {
 			
@@ -57,7 +57,7 @@ public class Menue extends JFrame {
         c.gridwidth = 2;
         pane.add(selectedFrameLabel,c);
         
-        JButton prevFrameButton = new JButton("<-");
+        JButton prevFrameButton = new JButton("\u21d0");
         prevFrameButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -69,7 +69,7 @@ public class Menue extends JFrame {
         c.gridwidth = 1;
         pane.add(prevFrameButton,c);
         
-        JButton nextFrameButton = new JButton("->");
+        JButton nextFrameButton = new JButton("\u21d2");
         nextFrameButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -82,14 +82,14 @@ public class Menue extends JFrame {
         c.gridy = 2;
         pane.add(nextFrameButton,c);
 
-        JButton playButton = new JButton(">");
+        JButton playButton = new JButton("\u27a4");
         playButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(autoplay){
 					autoplay = false;
-					((JButton)arg0.getSource()).setText(">");
+					((JButton)arg0.getSource()).setText("\u27a4");
 				}else{
 					autoplay();
 					((JButton)arg0.getSource()).setText("||");
@@ -101,6 +101,13 @@ public class Menue extends JFrame {
         c.gridwidth = 2;
         pane.add(playButton,c);
         
+        JLabel zoomLabel = new JLabel("Zoom");
+        setSelectetFrame(1);
+        c.gridx = 0;
+        c.gridy++;
+        c.gridwidth = 2;
+        pane.add(zoomLabel,c);
+        
         JButton zoomInButton = new JButton("+");
         zoomInButton.addActionListener(new ActionListener() {
 			
@@ -110,7 +117,7 @@ public class Menue extends JFrame {
 			}
 		});
         c.gridx = 0;
-        c.gridy = 4;
+        c.gridy++;
         c.gridwidth = 1;
         pane.add(zoomInButton,c);
         
@@ -123,8 +130,14 @@ public class Menue extends JFrame {
 			}
 		});
         c.gridx = 1;
-        c.gridy = 4;
         pane.add(zoomOutButton,c);
+        
+        JLabel navigationLabel = new JLabel("Navigation");
+        setSelectetFrame(1);
+        c.gridx = 0;
+        c.gridy++;
+        c.gridwidth = 2;
+        pane.add(navigationLabel,c);
         
         JButton centerUpButton = new JButton("\u2191");
         centerUpButton.addActionListener(new ActionListener() {
@@ -135,7 +148,7 @@ public class Menue extends JFrame {
 			}
 		});
         c.gridx = 0;
-        c.gridy = 5;
+        c.gridy++;
         c.gridwidth = 2;
         pane.add(centerUpButton,c);
 
@@ -148,7 +161,7 @@ public class Menue extends JFrame {
 			}
 		});
         c.gridx = 0;
-        c.gridy = 6;
+        c.gridy++;
         c.gridwidth = 1;
         pane.add(centerLeftButton,c);
 
@@ -161,7 +174,6 @@ public class Menue extends JFrame {
 			}
 		});
         c.gridx = 1;
-        c.gridy = 6;
         pane.add(centerRightButton,c);
         
         JButton centerDownButton = new JButton("\u2193");
@@ -173,7 +185,7 @@ public class Menue extends JFrame {
 			}
 		});
         c.gridx = 0;
-        c.gridy = 7;
+        c.gridy++;
         c.gridwidth = 2;
         pane.add(centerDownButton,c);
         
