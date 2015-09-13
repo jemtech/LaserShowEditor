@@ -5,6 +5,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -18,9 +21,39 @@ public class LSDisplay extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1744667576778214950L;
+	public static final int EDIT_MODE_IDLE = 0;
+	public static final int EDIT_MODE_ADD = 1;
+	public static final int EDIT_MODE_MOVE = 2;
+	public static final int EDIT_MODE_DELETE = 3;
+	
+	private int pointSize = 2;
+	
+	private int xWidth = 800;
+	private int yWidth = 800;
 	
 	private Frame frameToDisplay;
 	private LSDisplayPanel lsdp;
+	private int editMode = EDIT_MODE_IDLE;
+	
+	private int xBackup;
+	private int yBackup;
+	public void setEditMode(int mode){
+		if(pointUnderChange != null){
+			if(editMode == EDIT_MODE_ADD){
+				pointUnderChange = null;
+			}
+			if(editMode == EDIT_MODE_MOVE){
+				pointUnderChange.setX(xBackup);
+				pointUnderChange.setY(yBackup);
+				pointUnderChange = null;
+			}
+		}
+		editMode = mode;
+		if(editMode == EDIT_MODE_ADD){
+			pointUnderChange = new Coordinate();
+		}
+		repaint();
+	}
 	
 	public void setFrame(Frame frameToDisplay){
 		this.frameToDisplay = frameToDisplay;
@@ -34,10 +67,40 @@ public class LSDisplay extends JFrame {
 		lsdp = new LSDisplayPanel();
         setContentPane(lsdp);
         
-		setSize(800, 800);
+		setSize(xWidth, yWidth);
 		setVisible(true);
 	}
 	
+	private int podToIldaX(int x){
+		return (int) ((xWidth/2 - x) / zoom) - xCenter;
+	}
+	
+	private int podToIldaY(int y){
+		return (int) ((yWidth/2 - y) / zoom) - yCenter;
+	}
+	
+	private Coordinate nextToPod(int x, int y){
+		int xMin = (int) ((xWidth/2 - x - (0.5 + pointSize)) / zoom) - xCenter;
+		int xMax = (int) ((xWidth/2 - x + (0.5 + pointSize)) / zoom) - xCenter;
+		int yMin = (int) ((yWidth/2 - y - (0.5 + pointSize)) / zoom) - yCenter;
+		int yMax = (int) ((yWidth/2 - y + (0.5 + pointSize)) / zoom) - yCenter;
+		for(Coordinate coordinate : frameToDisplay.getCoordinates()){
+			if(xMin < coordinate.getX() && xMax > coordinate.getX() && yMin < coordinate.getY() && yMax > coordinate.getY()){
+				return coordinate;
+			}
+		}
+		return null;
+	}
+	
+	void deletePoint(Coordinate delete){
+		if(delete == null){
+			return;
+		}
+		frameToDisplay.getCoordinates().remove(delete);
+		this.repaint();
+	}
+	
+	Coordinate pointUnderChange = null;
 	private class LSDisplayPanel extends JPanel{
         /**
 		 * 
@@ -45,14 +108,70 @@ public class LSDisplay extends JFrame {
 		private static final long serialVersionUID = -9018863880299055900L;
 		
 		public LSDisplayPanel(){
-			
+			addMouseListener(new MouseListener() {
+				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					if(pointUnderChange != null){
+						pointUnderChange.setX(podToIldaX(e.getX()));
+						pointUnderChange.setY(podToIldaY(e.getY()));
+						if(editMode == EDIT_MODE_MOVE){
+							pointUnderChange = null;
+						}else if(editMode == EDIT_MODE_ADD){
+							System.out.println("add point: " + pointUnderChange);
+							frameToDisplay.getCoordinates().add(pointUnderChange);
+							pointUnderChange = new Coordinate();
+						}
+					}else{
+						if(editMode == EDIT_MODE_MOVE){
+							pointUnderChange = nextToPod(e.getX(), e.getY());
+						}
+					}
+					if(editMode == EDIT_MODE_DELETE){
+						deletePoint(nextToPod(e.getX(), e.getY()));
+					}
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+				}
+			});
+			addMouseMotionListener(new MouseMotionListener() {
+				
+				@Override
+				public void mouseMoved(MouseEvent e) {
+					if(pointUnderChange != null){
+						pointUnderChange.setX(podToIldaX(e.getX()));
+						pointUnderChange.setY(podToIldaY(e.getY()));
+						repaint();
+					}
+				}
+				
+				@Override
+				public void mouseDragged(MouseEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 		}
 
 		public void paintComponent(Graphics g){
 			//black backround
-			g.clearRect(0, 0, 800, 800);
+			g.clearRect(0, 0, xWidth, yWidth);
 			g.setColor(Color.BLACK);
-			g.fillRect(0, 0, 800, 800);
+			g.fillRect(0, 0, xWidth, yWidth);
 			paintFrame(g);
 		}
 	}
@@ -86,9 +205,12 @@ public class LSDisplay extends JFrame {
 		Graphics2D g2d = (Graphics2D) g;
         
 		List<Coordinate> coordinates = frameToDisplay.getCoordinates();
-		Coordinate lastCoordinate = null;
+		int x1 = Integer.MIN_VALUE;
+		int y1 = Integer.MIN_VALUE;
 		for(Coordinate coordinate : coordinates){
-			if(lastCoordinate != null){
+			int x2 = tICToPOD(coordinate.getX()+xCenter);
+			int y2 = tICToPOD(coordinate.getY()+yCenter);
+			if(x1 > Integer.MIN_VALUE && y1  > Integer.MIN_VALUE){
 				if(coordinate.isBlank()){
 					g2d.setColor(Color.LIGHT_GRAY);
 			        g2d.setStroke(dashedStroke);
@@ -96,15 +218,38 @@ public class LSDisplay extends JFrame {
 			        g2d.setStroke(normalStroke);
 			        if(fog > 0){
 				        g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue(), fog));
-				        int [ ] x = {tICToPOD(xCenter), tICToPOD(lastCoordinate.getX()+xCenter), tICToPOD(coordinate.getX()+xCenter)};
-				        int [ ] y = {tICToPOD(yCenter), tICToPOD(lastCoordinate.getY()+yCenter), tICToPOD(coordinate.getY()+yCenter)};
+				        int [ ] x = {tICToPOD(xCenter), x1, x2};
+				        int [ ] y = {tICToPOD(yCenter), y1, y2};
 				        g.fillPolygon(x, y, 3);
 			        }
 					g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue()));
 				}
-				g2d.drawLine(tICToPOD(lastCoordinate.getX()+xCenter), tICToPOD(lastCoordinate.getY()+yCenter), tICToPOD(coordinate.getX()+xCenter), tICToPOD(coordinate.getY()+yCenter));
+				g2d.drawLine(x1, y1, x2, y2);
+				if(editMode == EDIT_MODE_DELETE || editMode == EDIT_MODE_MOVE ){
+					g2d.fillRect(x2-pointSize, y2-pointSize, pointSize *2, pointSize * 2);
+				}
 			}
-			lastCoordinate = coordinate;
+			x1 = x2;
+			y1 = y2;
+		}
+		if(editMode == EDIT_MODE_ADD){
+			Coordinate coordinate = pointUnderChange;
+			int x2 = tICToPOD(coordinate.getX()+xCenter);
+			int y2 = tICToPOD(coordinate.getY()+yCenter);
+			if(coordinate.isBlank()){
+				g2d.setColor(Color.LIGHT_GRAY);
+		        g2d.setStroke(dashedStroke);
+			}else{
+		        g2d.setStroke(normalStroke);
+		        if(fog > 0){
+			        g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue(), fog));
+			        int [ ] x = {tICToPOD(xCenter), x1, x2};
+			        int [ ] y = {tICToPOD(yCenter), y1, y2};
+			        g.fillPolygon(x, y, 3);
+		        }
+				g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue()));
+			}
+			g2d.drawLine(x1, y1, x2, y2);
 		}
 	}
 	
@@ -142,14 +287,14 @@ public class LSDisplay extends JFrame {
 		this.repaint();
 	}
 	
-	private float zoom = 800.0f / 65536.0f;
+	private float zoom = xWidth / 65536.0f;
 	/**
 	 * translate ILDA coordinate to point on display
 	 * @param coordinate
 	 * @return
 	 */
 	private int tICToPOD(int coordinate){
-		return 400 - (int) (coordinate * zoom);
+		return xWidth/2 - (int) (coordinate * zoom);
 	}
 	
 }

@@ -217,6 +217,50 @@ public class Menue extends JFrame {
         c.gridwidth = 2;
         pane.add(fogSlider,c);
         
+        JLabel editLabel = new JLabel("Edit Point");
+        c.gridx = 0;
+        c.gridy++;
+        c.gridwidth = 2;
+        pane.add(editLabel,c);
+        
+        JButton addButton = new JButton("Add");
+        addButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				lsFramedisplay.setEditMode(LSDisplay.EDIT_MODE_ADD);
+			}
+		});
+        c.gridx = 0;
+        c.gridy++;
+        c.gridwidth = 1;
+        pane.add(addButton,c);
+
+        JButton moveButton = new JButton("Move");
+        moveButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				lsFramedisplay.setEditMode(LSDisplay.EDIT_MODE_MOVE);
+			}
+		});
+        c.gridx = 1;
+        c.gridwidth = 1;
+        pane.add(moveButton,c);
+        
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				lsFramedisplay.setEditMode(LSDisplay.EDIT_MODE_DELETE);
+			}
+		});
+        c.gridx = 0;
+        c.gridy++;
+        c.gridwidth = 1;
+        pane.add(deleteButton,c);
+        
         pack();
 		setVisible(true);
 	}
