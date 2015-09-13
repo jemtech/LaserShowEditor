@@ -12,6 +12,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.jemtech.lse.data.ilda.Frame;
@@ -188,6 +191,31 @@ public class Menue extends JFrame {
         c.gridy++;
         c.gridwidth = 2;
         pane.add(centerDownButton,c);
+        
+        JLabel fogLabel = new JLabel("Fog");
+        c.gridx = 0;
+        c.gridy++;
+        c.gridwidth = 2;
+        pane.add(fogLabel,c);
+        
+        JSlider fogSlider = new JSlider(JSlider.HORIZONTAL,
+                0, 100, 25);
+        fogSlider.setValue(lsFramedisplay.getFog()*100/255);
+        fogSlider.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				lsFramedisplay.setFog(((JSlider)arg0.getSource()).getValue() * 255 / 100);
+			}
+		});
+        fogSlider.setMajorTickSpacing(25);
+        fogSlider.setMinorTickSpacing(10);
+        fogSlider.setPaintTicks(true);
+        fogSlider.setPaintLabels(true);
+        c.gridx = 0;
+        c.gridy++;
+        c.gridwidth = 2;
+        pane.add(fogSlider,c);
         
         pack();
 		setVisible(true);

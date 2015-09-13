@@ -43,6 +43,10 @@ public class LSDisplay extends JFrame {
 		 * 
 		 */
 		private static final long serialVersionUID = -9018863880299055900L;
+		
+		public LSDisplayPanel(){
+			
+		}
 
 		public void paintComponent(Graphics g){
 			//black backround
@@ -51,6 +55,22 @@ public class LSDisplay extends JFrame {
 			g.fillRect(0, 0, 800, 800);
 			paintFrame(g);
 		}
+	}
+	private int fog = 25;
+	
+	public int getFog() {
+		return fog;
+	}
+
+	public void setFog(int fog) {
+		if(fog > 255){
+			fog = 255;
+		}
+		if(fog < 0){
+			fog = 0;
+		}
+		this.fog = fog;
+		this.repaint();
 	}
 	
 	final static float dash1[] = {3.0f};
@@ -73,8 +93,14 @@ public class LSDisplay extends JFrame {
 					g2d.setColor(Color.LIGHT_GRAY);
 			        g2d.setStroke(dashedStroke);
 				}else{
-					g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue()));
 			        g2d.setStroke(normalStroke);
+			        if(fog > 0){
+				        g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue(), fog));
+				        int [ ] x = {tICToPOD(xCenter), tICToPOD(lastCoordinate.getX()+xCenter), tICToPOD(coordinate.getX()+xCenter)};
+				        int [ ] y = {tICToPOD(yCenter), tICToPOD(lastCoordinate.getY()+yCenter), tICToPOD(coordinate.getY()+yCenter)};
+				        g.fillPolygon(x, y, 3);
+			        }
+					g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue()));
 				}
 				g2d.drawLine(tICToPOD(lastCoordinate.getX()+xCenter), tICToPOD(lastCoordinate.getY()+yCenter), tICToPOD(coordinate.getX()+xCenter), tICToPOD(coordinate.getY()+yCenter));
 			}
