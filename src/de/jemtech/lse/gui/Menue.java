@@ -1,13 +1,16 @@
 package de.jemtech.lse.gui;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -42,6 +45,7 @@ public class Menue extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser chooser = new JFileChooser();
+                chooser.setDialogType(JFileChooser.OPEN_DIALOG);
 			    FileNameExtensionFilter filter = new FileNameExtensionFilter("ILDA",
 			        "ild");
 			    chooser.setFileFilter(filter);
@@ -61,10 +65,11 @@ public class Menue extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser chooser = new JFileChooser();
+                chooser.setDialogType(JFileChooser.SAVE_DIALOG);
 			    FileNameExtensionFilter filter = new FileNameExtensionFilter("ILDA",
 			        "ild");
 			    chooser.setFileFilter(filter);
-			    int returnVal = chooser.showOpenDialog(null);
+			    int returnVal = chooser.showSaveDialog(null);
 			    if(returnVal == JFileChooser.APPROVE_OPTION) {
 			    	saveToFile(chooser.getSelectedFile().getAbsolutePath());
 			    }
@@ -248,6 +253,13 @@ public class Menue extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				if(lsFrames == null){
+					lsFrames = new LinkedList<Frame>();
+				}
+				if(lsFrames.isEmpty()){
+					lsFrames.add(new Frame());
+					setSelectetFrame(1);
+				}
 				lsFramedisplay.setEditMode(LSDisplay.EDIT_MODE_ADD);
 			}
 		});
@@ -280,6 +292,64 @@ public class Menue extends JFrame {
         c.gridy++;
         c.gridwidth = 1;
         pane.add(deleteButton,c);
+        
+        JButton colorButton = new JButton("Color");
+        colorButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				lsFramedisplay.setColor(JColorChooser.showDialog(null, "Line color", lsFramedisplay.getColor()));
+				if(lsFramedisplay.getEditMode() != LSDisplay.EDIT_MODE_ADD){
+					lsFramedisplay.setEditMode(LSDisplay.EDIT_MODE_COLOR);
+				}
+			}
+		});
+        c.gridx = 1;
+        c.gridwidth = 1;
+        pane.add(colorButton,c);
+        
+        JLabel editFrameLabel = new JLabel("Edit Frame");
+        c.gridx = 0;
+        c.gridy++;
+        c.gridwidth = 2;
+        pane.add(editFrameLabel,c);
+        
+        JButton addFrameButton = new JButton("Add");
+        addFrameButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(lsFrames == null){
+					lsFrames = new LinkedList<Frame>();
+					lsFrames.add(new Frame());
+					setSelectetFrame(1);
+				}else{
+					lsFrames.add(selectedFrame, new Frame());
+					setSelectetFrame(selectedFrame + 1);
+				}
+			}
+		});
+        c.gridx = 0;
+        c.gridy++;
+        c.gridwidth = 1;
+        pane.add(addFrameButton,c);
+
+        JButton deleteFrameButton = new JButton("Delete");
+        deleteFrameButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(lsFrames == null || lsFrames.isEmpty() || selectedFrame < 1 || selectedFrame > lsFrames.size() ){
+					return;
+				}else{
+					lsFrames.remove(selectedFrame -1);
+					setSelectetFrame(selectedFrame - 1);
+				}
+			}
+		});
+        c.gridx = 1;
+        c.gridwidth = 1;
+        pane.add(deleteFrameButton,c);
         
         pack();
 		setVisible(true);

@@ -25,8 +25,22 @@ public class LSDisplay extends JFrame {
 	public static final int EDIT_MODE_ADD = 1;
 	public static final int EDIT_MODE_MOVE = 2;
 	public static final int EDIT_MODE_DELETE = 3;
+	public static final int EDIT_MODE_COLOR = 4;
 	
-	private int pointSize = 2;
+	private Color color = Color.BLACK;
+	
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+		if(pointUnderChange != null){
+			pointUnderChange.setColor(getColor());
+		}
+	}
+
+	private int pointSize = 4;
 	
 	private int xWidth = 800;
 	private int yWidth = 800;
@@ -51,8 +65,13 @@ public class LSDisplay extends JFrame {
 		editMode = mode;
 		if(editMode == EDIT_MODE_ADD){
 			pointUnderChange = new Coordinate();
+			pointUnderChange.setColor(getColor());
 		}
 		repaint();
+	}
+	
+	public int getEditMode(){
+		return editMode;
 	}
 	
 	public void setFrame(Frame frameToDisplay){
@@ -125,6 +144,7 @@ public class LSDisplay extends JFrame {
 							System.out.println("add point: " + pointUnderChange);
 							frameToDisplay.getCoordinates().add(pointUnderChange);
 							pointUnderChange = new Coordinate();
+							pointUnderChange.setColor(getColor());
 						}
 					}else{
 						if(editMode == EDIT_MODE_MOVE){
@@ -133,6 +153,13 @@ public class LSDisplay extends JFrame {
 					}
 					if(editMode == EDIT_MODE_DELETE){
 						deletePoint(nextToPod(e.getX(), e.getY()));
+					}
+					if(editMode == EDIT_MODE_COLOR){
+						Coordinate coordinate = nextToPod(e.getX(), e.getY());
+						if(coordinate != null){
+							coordinate.setColor(getColor());
+							repaint();
+						}
 					}
 				}
 				
@@ -225,14 +252,14 @@ public class LSDisplay extends JFrame {
 					g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue()));
 				}
 				g2d.drawLine(x1, y1, x2, y2);
-				if(editMode == EDIT_MODE_DELETE || editMode == EDIT_MODE_MOVE ){
+				if(editMode == EDIT_MODE_DELETE || editMode == EDIT_MODE_MOVE || editMode == EDIT_MODE_COLOR){
 					g2d.fillRect(x2-pointSize, y2-pointSize, pointSize *2, pointSize * 2);
 				}
 			}
 			x1 = x2;
 			y1 = y2;
 		}
-		if(editMode == EDIT_MODE_ADD){
+		if(editMode == EDIT_MODE_ADD && x1 > Integer.MIN_VALUE && y1  > Integer.MIN_VALUE){
 			Coordinate coordinate = pointUnderChange;
 			int x2 = tICToPOD(coordinate.getX()+xCenter);
 			int y2 = tICToPOD(coordinate.getY()+yCenter);

@@ -1,5 +1,7 @@
 package de.jemtech.lse.data.ilda;
 
+import java.awt.Color;
+
 public class Coordinate {
 	private int x;
 	private int y;
@@ -10,6 +12,12 @@ public class Coordinate {
 	
 	public boolean isBlank(){
 		return r==0 && b == 0 && g==0;
+	}
+	
+	public void setColor(Color color){
+		setRed(color.getRed());
+		setGreen(color.getGreen());
+		setBlue(color.getBlue());
 	}
 	
 	public int getRed(){
