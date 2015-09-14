@@ -350,6 +350,21 @@ public class Menue extends JFrame {
         c.gridx = 1;
         c.gridwidth = 1;
         pane.add(deleteFrameButton,c);
+
+        JButton copyFrameButton = new JButton("Clone");
+        copyFrameButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Frame frame = lsFrames.get(selectedFrame -1);
+				lsFrames.add(selectedFrame, frame.clone());
+				setSelectetFrame(selectedFrame + 1);
+			}
+		});
+        c.gridx = 0;
+        c.gridy++;
+        c.gridwidth = 1;
+        pane.add(copyFrameButton,c);
         
         pack();
 		setVisible(true);

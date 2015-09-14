@@ -12,4 +12,15 @@ public class Frame {
 	String name = "";
 	String companyName = "";
 	int scannerHead;
+	
+	public Frame clone(){
+		Frame clone = new Frame();
+		clone.companyName = companyName;
+		clone.name = name;
+		clone.scannerHead = scannerHead;
+		for(Coordinate coordinate : coordinates){
+			clone.coordinates.add(coordinate.clone());
+		}
+		return clone;
+	}
 }

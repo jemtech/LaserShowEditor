@@ -67,4 +67,15 @@ public class Coordinate {
 	public void setZ(int z) {
 		this.z = z;
 	}
+	
+	public Coordinate clone(){
+		Coordinate clone = new Coordinate();
+		clone.b = b;
+		clone.g = g;
+		clone.r = r;
+		clone.x = x;
+		clone.y = y;
+		clone.z = z;
+		return clone;
+	}
 }
