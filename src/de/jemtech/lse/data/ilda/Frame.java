@@ -8,4 +8,8 @@ public class Frame {
 	public List<Coordinate> getCoordinates(){
 		return coordinates;
 	}
+
+	String name = "";
+	String companyName = "";
+	int scannerHead;
 }

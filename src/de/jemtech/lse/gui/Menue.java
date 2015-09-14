@@ -35,6 +35,7 @@ public class Menue extends JFrame {
         GridBagConstraints c = new GridBagConstraints();
         c.anchor = GridBagConstraints.CENTER;
         c.weightx = 1.0;
+        
         JButton loadButton = new JButton("load file");
         loadButton.addActionListener(new ActionListener() {
 			
@@ -51,8 +52,27 @@ public class Menue extends JFrame {
 				
 			}
 		});
-        c.gridwidth = 2;
+        c.gridwidth = 1;
         pane.add(loadButton,c);
+        
+        JButton saveButton = new JButton("save file");
+        saveButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser chooser = new JFileChooser();
+			    FileNameExtensionFilter filter = new FileNameExtensionFilter("ILDA",
+			        "ild");
+			    chooser.setFileFilter(filter);
+			    int returnVal = chooser.showOpenDialog(null);
+			    if(returnVal == JFileChooser.APPROVE_OPTION) {
+			    	saveToFile(chooser.getSelectedFile().getAbsolutePath());
+			    }
+				
+			}
+		});
+        c.gridx = 1;
+        pane.add(saveButton,c);
         
         selectedFrameLabel = new JLabel();
         setSelectetFrame(1);
@@ -303,6 +323,20 @@ public class Menue extends JFrame {
 			e.printStackTrace();
 		}
 		setSelectetFrame(1);
+	}
+	
+	private void saveToFile(String fileName){
+		if(lsFrames == null){
+			return;
+		}
+		ILDAImageDataTransferFormat format = new ILDAImageDataTransferFormat();
+		try {
+			format.write(fileName, lsFrames);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	boolean autoplay = false;
