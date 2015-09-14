@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -88,6 +90,51 @@ public class LSDisplay extends JFrame {
         
 		setSize(xWidth, yWidth);
 		setVisible(true);
+		
+		addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				switch(arg0.getKeyCode()){
+				case KeyEvent.VK_ESCAPE:{
+					setEditMode(EDIT_MODE_IDLE);
+					break;
+				}
+				case KeyEvent.VK_UP:{
+					moveUp();
+					break;
+				}
+				case KeyEvent.VK_DOWN:{
+					moveDown();
+					break;
+				}
+				case KeyEvent.VK_LEFT:{
+					moveLeft();
+					break;
+				}
+				case KeyEvent.VK_RIGHT:{
+					moveRight();
+					break;
+				}
+				case KeyEvent.VK_PLUS:{
+					setZoom(getZoom() * 1.1f);
+					break;
+				}
+				case KeyEvent.VK_MINUS:{
+					setZoom(getZoom() * 0.9f);
+					break;
+				}
+				}//switch end
+			}
+		});
 	}
 	
 	private int podToIldaX(int x){
@@ -141,7 +188,6 @@ public class LSDisplay extends JFrame {
 						if(editMode == EDIT_MODE_MOVE){
 							pointUnderChange = null;
 						}else if(editMode == EDIT_MODE_ADD){
-							System.out.println("add point: " + pointUnderChange);
 							frameToDisplay.getCoordinates().add(pointUnderChange);
 							pointUnderChange = new Coordinate();
 							pointUnderChange.setColor(getColor());
@@ -294,7 +340,7 @@ public class LSDisplay extends JFrame {
 	private int xCenter = 0;
 	private int yCenter = 0;
 	
-	public void moveRigth(){
+	public void moveRight(){
 		xCenter += 10 * (1/zoom) + 0.5;
 		this.repaint();
 	}

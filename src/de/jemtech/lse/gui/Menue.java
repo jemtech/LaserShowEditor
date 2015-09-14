@@ -198,7 +198,7 @@ public class Menue extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				lsFramedisplay.moveRigth();
+				lsFramedisplay.moveRight();
 			}
 		});
         c.gridx = 1;
