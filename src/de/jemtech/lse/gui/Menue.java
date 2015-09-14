@@ -146,110 +146,110 @@ public class Menue extends JFrame {
 		});
         c.gridx = 0;
         c.gridy++;
-        c.gridwidth = 1;
-        pane.add(zoomInButton,c);
-        
-        JButton zoomOutButton = new JButton("-");
-        zoomOutButton.addActionListener(new ActionListener() {
+		c.gridwidth = 1;
+		pane.add(zoomInButton,c);
+		
+		JButton zoomOutButton = new JButton("-");
+		zoomOutButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				lsFramedisplay.setZoom(lsFramedisplay.getZoom() * 0.9f);
 			}
 		});
-        c.gridx = 1;
-        pane.add(zoomOutButton,c);
-        
-        JLabel navigationLabel = new JLabel("Navigation");
-        setSelectetFrame(1);
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 2;
-        pane.add(navigationLabel,c);
-        
-        JButton centerUpButton = new JButton("\u2191");
-        centerUpButton.addActionListener(new ActionListener() {
+		c.gridx = 1;
+		pane.add(zoomOutButton,c);
+		
+		JLabel navigationLabel = new JLabel("Navigation");
+		setSelectetFrame(1);
+		c.gridx = 0;
+		c.gridy++;
+		c.gridwidth = 2;
+		pane.add(navigationLabel,c);
+		
+		JButton centerUpButton = new JButton("\u2191");
+		centerUpButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				lsFramedisplay.moveUp();
 			}
 		});
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 2;
-        pane.add(centerUpButton,c);
-
-        JButton centerLeftButton = new JButton("\u2190");
-        centerLeftButton.addActionListener(new ActionListener() {
+		c.gridx = 0;
+		c.gridy++;
+		c.gridwidth = 2;
+		pane.add(centerUpButton,c);
+		
+		JButton centerLeftButton = new JButton("\u2190");
+		centerLeftButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				lsFramedisplay.moveLeft();
 			}
 		});
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 1;
-        pane.add(centerLeftButton,c);
-
-        JButton centerRightButton = new JButton("\u2192");
-        centerRightButton.addActionListener(new ActionListener() {
+		c.gridx = 0;
+		c.gridy++;
+		c.gridwidth = 1;
+		pane.add(centerLeftButton,c);
+		
+		JButton centerRightButton = new JButton("\u2192");
+		centerRightButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				lsFramedisplay.moveRight();
 			}
 		});
-        c.gridx = 1;
-        pane.add(centerRightButton,c);
-        
-        JButton centerDownButton = new JButton("\u2193");
-        centerDownButton.addActionListener(new ActionListener() {
+		c.gridx = 1;
+		pane.add(centerRightButton,c);
+		
+		JButton centerDownButton = new JButton("\u2193");
+		centerDownButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				lsFramedisplay.moveDown();
 			}
 		});
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 2;
-        pane.add(centerDownButton,c);
-        
-        JLabel fogLabel = new JLabel("Fog");
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 2;
-        pane.add(fogLabel,c);
-        
-        JSlider fogSlider = new JSlider(JSlider.HORIZONTAL,
-                0, 100, 25);
-        fogSlider.setValue(lsFramedisplay.getFog()*100/255);
-        fogSlider.addChangeListener(new ChangeListener() {
+		c.gridx = 0;
+		c.gridy++;
+		c.gridwidth = 2;
+		pane.add(centerDownButton,c);
+		
+		JLabel fogLabel = new JLabel("Fog");
+		c.gridx = 0;
+		c.gridy++;
+		c.gridwidth = 2;
+		pane.add(fogLabel,c);
+		
+		JSlider fogSlider = new JSlider(JSlider.HORIZONTAL,
+		        0, 100, 25);
+		fogSlider.setValue(lsFramedisplay.getFog()*100/255);
+		fogSlider.addChangeListener(new ChangeListener() {
 			
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				lsFramedisplay.setFog(((JSlider)arg0.getSource()).getValue() * 255 / 100);
 			}
 		});
-        fogSlider.setMajorTickSpacing(25);
-        fogSlider.setMinorTickSpacing(10);
-        fogSlider.setPaintTicks(true);
-        fogSlider.setPaintLabels(true);
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 2;
-        pane.add(fogSlider,c);
-        
-        JLabel editLabel = new JLabel("Edit Point");
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 2;
-        pane.add(editLabel,c);
-        
-        JButton addButton = new JButton("Add");
-        addButton.addActionListener(new ActionListener() {
+		fogSlider.setMajorTickSpacing(25);
+		fogSlider.setMinorTickSpacing(10);
+		fogSlider.setPaintTicks(true);
+		fogSlider.setPaintLabels(true);
+		c.gridx = 0;
+		c.gridy++;
+		c.gridwidth = 2;
+		pane.add(fogSlider,c);
+		
+		JLabel editLabel = new JLabel("Edit Point");
+		c.gridx = 0;
+		c.gridy++;
+		c.gridwidth = 2;
+		pane.add(editLabel,c);
+		
+		JButton addButton = new JButton("Add");
+		addButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -263,38 +263,38 @@ public class Menue extends JFrame {
 				lsFramedisplay.setEditMode(LSDisplay.EDIT_MODE_ADD);
 			}
 		});
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 1;
-        pane.add(addButton,c);
-
-        JButton moveButton = new JButton("Move");
-        moveButton.addActionListener(new ActionListener() {
+		c.gridx = 0;
+		c.gridy++;
+		c.gridwidth = 1;
+		pane.add(addButton,c);
+		
+		JButton moveButton = new JButton("Move");
+		moveButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				lsFramedisplay.setEditMode(LSDisplay.EDIT_MODE_MOVE);
 			}
 		});
-        c.gridx = 1;
-        c.gridwidth = 1;
-        pane.add(moveButton,c);
-        
-        JButton deleteButton = new JButton("Delete");
-        deleteButton.addActionListener(new ActionListener() {
+		c.gridx = 1;
+		c.gridwidth = 1;
+		pane.add(moveButton,c);
+		
+		JButton deleteButton = new JButton("Delete");
+		deleteButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				lsFramedisplay.setEditMode(LSDisplay.EDIT_MODE_DELETE);
 			}
 		});
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 1;
-        pane.add(deleteButton,c);
-        
-        JButton colorButton = new JButton("Color");
-        colorButton.addActionListener(new ActionListener() {
+		c.gridx = 0;
+		c.gridy++;
+		c.gridwidth = 1;
+		pane.add(deleteButton,c);
+		
+		JButton colorButton = new JButton("Color");
+		colorButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -304,18 +304,18 @@ public class Menue extends JFrame {
 				}
 			}
 		});
-        c.gridx = 1;
-        c.gridwidth = 1;
-        pane.add(colorButton,c);
-        
-        JLabel editFrameLabel = new JLabel("Edit Frame");
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 2;
-        pane.add(editFrameLabel,c);
-        
-        JButton addFrameButton = new JButton("Add");
-        addFrameButton.addActionListener(new ActionListener() {
+		c.gridx = 1;
+		c.gridwidth = 1;
+		pane.add(colorButton,c);
+		
+		JLabel editFrameLabel = new JLabel("Edit Frame");
+		c.gridx = 0;
+		c.gridy++;
+		c.gridwidth = 2;
+		pane.add(editFrameLabel,c);
+		
+		JButton addFrameButton = new JButton("Add");
+		addFrameButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -329,13 +329,13 @@ public class Menue extends JFrame {
 				}
 			}
 		});
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 1;
-        pane.add(addFrameButton,c);
-
-        JButton deleteFrameButton = new JButton("Delete");
-        deleteFrameButton.addActionListener(new ActionListener() {
+		c.gridx = 0;
+		c.gridy++;
+		c.gridwidth = 1;
+		pane.add(addFrameButton,c);
+		
+		JButton deleteFrameButton = new JButton("Delete");
+		deleteFrameButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -347,12 +347,12 @@ public class Menue extends JFrame {
 				}
 			}
 		});
-        c.gridx = 1;
-        c.gridwidth = 1;
-        pane.add(deleteFrameButton,c);
-
-        JButton copyFrameButton = new JButton("Clone");
-        copyFrameButton.addActionListener(new ActionListener() {
+		c.gridx = 1;
+		c.gridwidth = 1;
+		pane.add(deleteFrameButton,c);
+		
+		JButton copyFrameButton = new JButton("Clone");
+		copyFrameButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -361,10 +361,10 @@ public class Menue extends JFrame {
 				setSelectetFrame(selectedFrame + 1);
 			}
 		});
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 1;
-        pane.add(copyFrameButton,c);
+		c.gridx = 0;
+		c.gridy++;
+		c.gridwidth = 1;
+		pane.add(copyFrameButton,c);
         
         pack();
 		setVisible(true);

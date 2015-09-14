@@ -119,7 +119,10 @@ public class ILDAImageDataTransferFormat {
 					totalNumber += in.read();
 					frame.scannerHead = in.read();
 					in.read();//last (not used) header byte: Data beginns
-					if(dataType == ILDA_3D_COORD_HEADER_TYPE){
+					if(numberOfDataEntries == 0){
+						//a frame with no entries is the end frame
+						frame = null;
+					}else if(dataType == ILDA_3D_COORD_HEADER_TYPE){
 						parse3DCoordData(in, numberOfDataEntries, frame);
 					}else if(dataType == ILDA_2D_COORD_HEADER_TYPE){
 						parse2DCoordData(in, numberOfDataEntries, frame);
@@ -597,44 +600,51 @@ public class ILDAImageDataTransferFormat {
 	public void write(OutputStream out, List<Frame> frames, char type) throws IOException{
 
 		int totalFrameNumber = frames.size();
+		//TODO write color-table if needed
 		for(int f = 0; f < totalFrameNumber; f++){
 			Frame frame = frames.get(f);
-			for(int i = 0; i < 7; i++){
-				out.write(HEADER_START[i]);
-			}
-			out.write(type);
-			
-			for(int i = 0; i < 8; i++){
-				if(frame.name == null || i >= frame.name.length()){
-					out.write(' ');
-				}else{
-					out.write(frame.name.charAt(i));
-				}
-			}
-			for(int i = 0; i < 8; i++){
-				if(frame.companyName == null || i >= frame.companyName.length()){
-					out.write(' ');
-				}else{
-					out.write(frame.companyName.charAt(i));
-				}
-			}
-			int totalPointCount = 0;
-			if(frame.getCoordinates() != null){
-				totalPointCount = frame.getCoordinates().size();
-			}
-			out.write((totalPointCount & 0xff00)>>8);
-			out.write(totalPointCount & 0xff);
-			out.write((f & 0xff00)>>8);
-			out.write(f & 0xff);
-			out.write((totalFrameNumber & 0xff00)>>8);
-			out.write(totalFrameNumber & 0xff);
-			out.write(frame.scannerHead);
-			out.write(0x00);//last (not used) header byte: Data beginns
-			if(type == ILDA_2D_COORD_TRUE_COL_HEADER_TYPE){
-				write2DTrueColor(out, frame);
+			writeFrame(out, frame, type, totalFrameNumber, f);
+		}
+		//write empty closing frame
+		writeFrame(out, new Frame(), type, totalFrameNumber, totalFrameNumber);
+	}
+	
+	private void writeFrame(OutputStream out, Frame frame, char type, int totalFrameNumber, int frameNumber) throws IOException{
+		for(int i = 0; i < 7; i++){
+			out.write(HEADER_START[i]);
+		}
+		out.write(type);
+		
+		for(int i = 0; i < 8; i++){
+			if(frame.name == null || i >= frame.name.length()){
+				out.write(' ');
 			}else{
-				System.err.println("Type " + type + " not supported.");
+				out.write(frame.name.charAt(i));
 			}
+		}
+		for(int i = 0; i < 8; i++){
+			if(frame.companyName == null || i >= frame.companyName.length()){
+				out.write(' ');
+			}else{
+				out.write(frame.companyName.charAt(i));
+			}
+		}
+		int totalPointCount = 0;
+		if(frame.getCoordinates() != null){
+			totalPointCount = frame.getCoordinates().size();
+		}
+		out.write((totalPointCount & 0xff00)>>8);
+		out.write(totalPointCount & 0xff);
+		out.write((frameNumber & 0xff00)>>8);
+		out.write(frameNumber & 0xff);
+		out.write((totalFrameNumber & 0xff00)>>8);
+		out.write(totalFrameNumber & 0xff);
+		out.write(frame.scannerHead);
+		out.write(0x00);//last (not used) header byte: Data beginns
+		if(type == ILDA_2D_COORD_TRUE_COL_HEADER_TYPE){
+			write2DTrueColor(out, frame);
+		}else{
+			System.err.println("Type " + type + " not supported.");
 		}
 	}
 	
