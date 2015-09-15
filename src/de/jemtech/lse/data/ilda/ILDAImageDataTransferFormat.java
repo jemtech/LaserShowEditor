@@ -598,18 +598,58 @@ public class ILDAImageDataTransferFormat {
 	}
 	
 	public void write(OutputStream out, List<Frame> frames, char type) throws IOException{
-
+		int colourTable[][] = this.colourTable;
+		if(colourTable == null){
+			colourTable = ILDA_DEFAULT_COLOUR_PALETTE;
+		}
+		if(type == ILDA_2D_COORD_HEADER_TYPE || type == ILDA_3D_COORD_HEADER_TYPE){
+			writeColorTable(out, colourTable);
+		}
 		int totalFrameNumber = frames.size();
-		//TODO write color-table if needed
-		for(int f = 0; f < totalFrameNumber; f++){
-			Frame frame = frames.get(f);
-			writeFrame(out, frame, type, totalFrameNumber, f);
+		int frameNumber = 0;
+		while(frameNumber < totalFrameNumber){
+			Frame frame = frames.get(frameNumber);
+			writeFrame(out, frame, type, totalFrameNumber, frameNumber, colourTable);
+			frameNumber++;
 		}
 		//write empty closing frame
-		writeFrame(out, new Frame(), type, totalFrameNumber, totalFrameNumber);
+		writeFrame(out, new Frame(), type, totalFrameNumber, frameNumber, colourTable);
 	}
 	
-	private void writeFrame(OutputStream out, Frame frame, char type, int totalFrameNumber, int frameNumber) throws IOException{
+	private void writeColorTable(OutputStream out, int colourTable[][]) throws IOException{
+		for(int i = 0; i < 7; i++){
+			out.write(HEADER_START[i]);
+		}
+		out.write(ILDA_COLOUR_PALETTE_HEADER_TYPE);
+		String name = "Color";
+		for(int i = 0; i < 8; i++){
+			if(name == null || i >= name.length()){
+				out.write(' ');
+			}else{
+				out.write(name.charAt(i));
+			}
+		}
+		for(int i = 0; i < 8; i++){
+			out.write(' ');
+		}
+		int totalcolorCount = colourTable.length;
+		
+		out.write((totalcolorCount & 0xff00)>>8);
+		out.write(totalcolorCount & 0xff);
+		out.write((0 & 0xff00)>>8);
+		out.write(0 & 0xff);
+		out.write((0 & 0xff00)>>8);
+		out.write(0 & 0xff);
+		out.write(0);
+		out.write(0x00);//last (not used) header byte: Data beginns
+		for(int color[] : colourTable){
+			out.write(color[0]);
+			out.write(color[1]);
+			out.write(color[2]);
+		}
+	}
+	
+	private void writeFrame(OutputStream out, Frame frame, char type, int totalFrameNumber, int frameNumber, int colourTable[][]) throws IOException{
 		for(int i = 0; i < 7; i++){
 			out.write(HEADER_START[i]);
 		}
@@ -643,6 +683,12 @@ public class ILDAImageDataTransferFormat {
 		out.write(0x00);//last (not used) header byte: Data beginns
 		if(type == ILDA_2D_COORD_TRUE_COL_HEADER_TYPE){
 			write2DTrueColor(out, frame);
+		}else if(type == ILDA_3D_COORD_TRUE_COL_HEADER_TYPE){
+			write3DTrueColor(out, frame);
+		}else if(type == ILDA_2D_COORD_HEADER_TYPE){
+			write2DIlda(out, frame, colourTable);
+		}else if(type == ILDA_3D_COORD_HEADER_TYPE){
+			write3DIlda(out, frame, colourTable);
 		}else{
 			System.err.println("Type " + type + " not supported.");
 		}
@@ -664,6 +710,76 @@ public class ILDAImageDataTransferFormat {
 			out.write(coordinate.getGreen());
 			out.write(coordinate.getRed());
 		}
+	}
+	
+	private void write3DTrueColor(OutputStream out, Frame frame) throws IOException{
+		if(frame.getCoordinates() == null){
+			return;
+		}
+		for(int i = 0; i < frame.getCoordinates().size(); i++){
+			Coordinate coordinate = frame.getCoordinates().get(i);
+			writeTwoByteInt(out, (short) coordinate.getX());
+			writeTwoByteInt(out, (short) coordinate.getY());
+			writeTwoByteInt(out, (short) coordinate.getZ());
+			StatusByte status = new StatusByte();
+			status.blanking = coordinate.isBlank();
+			status.lastEntry = (i == frame.getCoordinates().size() - 1);
+			writeStatus(out, status);
+			out.write(coordinate.getBlue());
+			out.write(coordinate.getGreen());
+			out.write(coordinate.getRed());
+		}
+	}
+	
+	private void write2DIlda(OutputStream out, Frame frame, int colourTable[][]) throws IOException{
+		if(frame.getCoordinates() == null || colourTable == null){
+			return;
+		}
+		for(int i = 0; i < frame.getCoordinates().size(); i++){
+			Coordinate coordinate = frame.getCoordinates().get(i);
+			writeTwoByteInt(out, (short) coordinate.getX());
+			writeTwoByteInt(out, (short) coordinate.getY());
+			StatusByte status = new StatusByte();
+			status.blanking = coordinate.isBlank();
+			status.lastEntry = (i == frame.getCoordinates().size() - 1);
+			writeStatus(out, status);
+			out.write(matchingColor(coordinate, colourTable));
+		}
+	}
+	
+	private void write3DIlda(OutputStream out, Frame frame, int colourTable[][]) throws IOException{
+		if(frame.getCoordinates() == null || colourTable == null){
+			return;
+		}
+		for(int i = 0; i < frame.getCoordinates().size(); i++){
+			Coordinate coordinate = frame.getCoordinates().get(i);
+			writeTwoByteInt(out, (short) coordinate.getX());
+			writeTwoByteInt(out, (short) coordinate.getY());
+			writeTwoByteInt(out, (short) coordinate.getZ());
+			StatusByte status = new StatusByte();
+			status.blanking = coordinate.isBlank();
+			status.lastEntry = (i == frame.getCoordinates().size() - 1);
+			writeStatus(out, status);
+			out.write(matchingColor(coordinate, colourTable));
+		}
+	}
+	
+	private int matchingColor(Coordinate coordinate, int colourTable[][]){
+		int bestMatch = 0;
+		int bestDistance = Integer.MAX_VALUE;
+		for(int i = 0; i < colourTable.length; i++){
+			int distance = Math.abs(coordinate.getRed() - colourTable[i][0]);
+			distance += Math.abs(coordinate.getGreen() - colourTable[i][1]);
+			distance += Math.abs(coordinate.getBlue() - colourTable[i][2]);
+			if(distance == 0){
+				return i;
+			}
+			if(distance < bestDistance){
+				bestDistance = distance;
+				bestMatch = i;
+			}
+		}
+		return bestMatch;
 	}
 	
 	private void writeTwoByteInt(OutputStream out, short val) throws IOException{
