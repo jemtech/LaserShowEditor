@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -241,6 +242,20 @@ public class Menue extends JFrame {
 		c.gridy++;
 		c.gridwidth = 2;
 		pane.add(fogSlider,c);
+		
+		JCheckBox fogEndlessCheckBox = new JCheckBox("Endless");
+		fogEndlessCheckBox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				lsFramedisplay.setFogEndless(((JCheckBox) arg0.getSource()).isSelected());
+			}
+		});
+		fogEndlessCheckBox.setSelected(lsFramedisplay.isFogEndless());
+		c.gridx = 0;
+		c.gridy++;
+		c.gridwidth = 1;
+		pane.add(fogEndlessCheckBox,c);
 		
 		JLabel editLabel = new JLabel("Edit Point");
 		c.gridx = 0;

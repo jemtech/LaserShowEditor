@@ -146,6 +146,9 @@ public class LSDisplay extends JFrame {
 	}
 	
 	private Coordinate nextToPod(int x, int y){
+		if(frameToDisplay == null){
+			return null;
+		}
 		int xMin = (int) ((xWidth/2 - x - (0.5 + pointSize)) / zoom) - xCenter;
 		int xMax = (int) ((xWidth/2 - x + (0.5 + pointSize)) / zoom) - xCenter;
 		int yMin = (int) ((yWidth/2 - y - (0.5 + pointSize)) / zoom) - yCenter;
@@ -265,6 +268,17 @@ public class LSDisplay extends JFrame {
 		this.repaint();
 	}
 	
+	private boolean fogEndless = false;
+	
+	public boolean isFogEndless() {
+		return fogEndless;
+	}
+
+	public void setFogEndless(boolean fogEndless) {
+		this.fogEndless = fogEndless;
+		repaint();
+	}
+
 	final static float dash1[] = {3.0f};
     static Stroke dashedStroke = new BasicStroke(1.0f,
             BasicStroke.CAP_BUTT,
@@ -280,9 +294,36 @@ public class LSDisplay extends JFrame {
 		List<Coordinate> coordinates = frameToDisplay.getCoordinates();
 		int x1 = Integer.MIN_VALUE;
 		int y1 = Integer.MIN_VALUE;
+		int x1f = Integer.MIN_VALUE;
+		int y1f = Integer.MIN_VALUE;
+		int xc = tICToPOD(xCenter);
+		int yc = tICToPOD(yCenter);
 		for(Coordinate coordinate : coordinates){
 			int x2 = tICToPOD(coordinate.getX()+xCenter);
 			int y2 = tICToPOD(coordinate.getY()+yCenter);
+			int x2f = 0;
+			int y2f = 0;
+			if(fogEndless && fog > 0){
+				double x2ft;
+				double y2ft;
+        		if(Math.abs(coordinate.getX()) > Math.abs(coordinate.getY())){
+        			if(coordinate.getX() >  0){
+        				x2ft = 100000;
+        			}else{
+        				x2ft = -100000;
+        			}
+        			y2ft = ((x2ft * coordinate.getY())/coordinate.getX());
+        		}else{
+        			if(coordinate.getY() >  0){
+        				y2ft = 100000;
+        			}else{
+        				y2ft = -100000;
+        			}
+        			x2ft = ((y2ft * coordinate.getX())/coordinate.getY());
+        		}
+        		x2f = tICToPOD((int) (x2ft+xCenter));
+				y2f = tICToPOD((int) (y2ft+yCenter));
+			}
 			if(x1 > Integer.MIN_VALUE && y1  > Integer.MIN_VALUE){
 				if(coordinate.isBlank()){
 					g2d.setColor(Color.LIGHT_GRAY);
@@ -290,10 +331,16 @@ public class LSDisplay extends JFrame {
 				}else{
 			        g2d.setStroke(normalStroke);
 			        if(fog > 0){
-				        g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue(), fog));
-				        int [ ] x = {tICToPOD(xCenter), x1, x2};
-				        int [ ] y = {tICToPOD(yCenter), y1, y2};
-				        g.fillPolygon(x, y, 3);
+			        	g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue(), fog));
+			        	if(fogEndless){
+					        int [ ] x = {xc, x1f, x2f};
+					        int [ ] y = {yc, y1f, y2f};
+					        g.fillPolygon(x, y, 3);
+			        	}else{
+					        int [ ] x = {xc, x1, x2};
+					        int [ ] y = {yc, y1, y2};
+					        g.fillPolygon(x, y, 3);
+			        	}
 			        }
 					g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue()));
 				}
@@ -304,6 +351,8 @@ public class LSDisplay extends JFrame {
 			}
 			x1 = x2;
 			y1 = y2;
+			x1f = x2f;
+			y1f = y2f;
 		}
 		if(editMode == EDIT_MODE_ADD && x1 > Integer.MIN_VALUE && y1  > Integer.MIN_VALUE){
 			Coordinate coordinate = pointUnderChange;
@@ -324,14 +373,15 @@ public class LSDisplay extends JFrame {
 			}
 			g2d.drawLine(x1, y1, x2, y2);
 		}
+		
 	}
 	
-	public float getZoom(){
+	public double getZoom(){
 		return zoom;
 	}
 	
-	public void setZoom(float zoom){
-		if(zoom <= 0.0f){
+	public void setZoom(double zoom){
+		if(zoom <= 0.0){
 			System.err.println("zoom can't be <= 0");
 		}
 		this.zoom = zoom;
@@ -360,7 +410,7 @@ public class LSDisplay extends JFrame {
 		this.repaint();
 	}
 	
-	private float zoom = xWidth / 65536.0f;
+	private double zoom = xWidth / 65536.0;
 	/**
 	 * translate ILDA coordinate to point on display
 	 * @param coordinate
