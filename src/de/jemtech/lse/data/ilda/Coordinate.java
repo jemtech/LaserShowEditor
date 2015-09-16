@@ -45,10 +45,20 @@ public class Coordinate {
 	}
 
 	public void setX(int x) {
+		if(x>32767){
+			x=32767;
+		}else if(x<-32768){
+			x=-32768;
+		}
 		this.x = x;
 	}
 
 	public void setY(int y) {
+		if(y>32767){
+			y=32767;
+		}else if(y<-32768){
+			y=-32768;
+		}
 		this.y = y;
 	}
 
@@ -65,6 +75,11 @@ public class Coordinate {
 	}
 	
 	public void setZ(int z) {
+		if(z>32767){
+			z=32767;
+		}else if(z<-32768){
+			z=-32768;
+		}
 		this.z = z;
 	}
 	

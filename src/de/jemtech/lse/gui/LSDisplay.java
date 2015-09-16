@@ -376,8 +376,8 @@ public class LSDisplay extends JFrame {
 	}
 	
 	private void printFrameBorder(Graphics2D g2d){
-		int xMax = tICToPOD(32768+xCenter);
-		int yMax = tICToPOD(32768+yCenter);
+		int xMax = tICToPOD(32767+xCenter);
+		int yMax = tICToPOD(32767+yCenter);
 		int xMin = tICToPOD(-32768+xCenter);
 		int yMin = tICToPOD(-32768+yCenter);
 		g2d.setColor(Color.white);
