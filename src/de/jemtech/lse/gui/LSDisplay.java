@@ -44,8 +44,8 @@ public class LSDisplay extends JFrame {
 
 	private int pointSize = 4;
 	
-	private int xWidth = 800;
-	private int yWidth = 800;
+	private int xWidth = 750;
+	private int yWidth = 750;
 	
 	private Frame frameToDisplay;
 	private LSDisplayPanel lsdp;
@@ -248,7 +248,7 @@ public class LSDisplay extends JFrame {
 			g.clearRect(0, 0, xWidth, yWidth);
 			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, xWidth, yWidth);
-			paintFrame(g);
+			paintFrame((Graphics2D) g);
 		}
 	}
 	private int fog = 25;
@@ -285,11 +285,10 @@ public class LSDisplay extends JFrame {
             BasicStroke.JOIN_MITER,
             10.0f, dash1, 0.0f);
     static Stroke normalStroke = new BasicStroke();
-	private void paintFrame(Graphics g){
+	private void paintFrame(Graphics2D g2d){
 		if(frameToDisplay == null){
 			return;
 		}
-		Graphics2D g2d = (Graphics2D) g;
         
 		List<Coordinate> coordinates = frameToDisplay.getCoordinates();
 		int x1 = Integer.MIN_VALUE;
@@ -335,11 +334,11 @@ public class LSDisplay extends JFrame {
 			        	if(fogEndless){
 					        int [ ] x = {xc, x1f, x2f};
 					        int [ ] y = {yc, y1f, y2f};
-					        g.fillPolygon(x, y, 3);
+					        g2d.fillPolygon(x, y, 3);
 			        	}else{
 					        int [ ] x = {xc, x1, x2};
 					        int [ ] y = {yc, y1, y2};
-					        g.fillPolygon(x, y, 3);
+					        g2d.fillPolygon(x, y, 3);
 			        	}
 			        }
 					g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue()));
@@ -365,14 +364,28 @@ public class LSDisplay extends JFrame {
 		        g2d.setStroke(normalStroke);
 		        if(fog > 0){
 			        g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue(), fog));
-			        int [ ] x = {tICToPOD(xCenter), x1, x2};
-			        int [ ] y = {tICToPOD(yCenter), y1, y2};
-			        g.fillPolygon(x, y, 3);
+			        int [ ] x = {xc, x1, x2};
+			        int [ ] y = {yc, y1, y2};
+			        g2d.fillPolygon(x, y, 3);
 		        }
 				g2d.setColor(new Color(coordinate.getRed(), coordinate.getGreen(), coordinate.getBlue()));
 			}
 			g2d.drawLine(x1, y1, x2, y2);
 		}
+		printFrameBorder(g2d);
+	}
+	
+	private void printFrameBorder(Graphics2D g2d){
+		int xMax = tICToPOD(32768+xCenter);
+		int yMax = tICToPOD(32768+yCenter);
+		int xMin = tICToPOD(-32768+xCenter);
+		int yMin = tICToPOD(-32768+yCenter);
+		g2d.setColor(Color.white);
+		g2d.setStroke(normalStroke);
+		g2d.drawLine(xMax, yMax, xMax, yMin);
+		g2d.drawLine(xMax, yMax, xMin, yMax);
+		g2d.drawLine(xMin, yMin, xMax, yMin);
+		g2d.drawLine(xMin, yMin, xMin, yMax);
 		
 	}
 	
