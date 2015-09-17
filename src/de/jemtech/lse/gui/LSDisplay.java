@@ -5,11 +5,15 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -46,6 +50,12 @@ public class LSDisplay extends JFrame {
 	
 	private int xWidth = 750;
 	private int yWidth = 750;
+	
+	public void changSize(int width, int height){
+		xWidth = width;
+		yWidth = height;
+		repaint();
+	}
 	
 	private Frame frameToDisplay;
 	private LSDisplayPanel lsdp;
@@ -135,6 +145,11 @@ public class LSDisplay extends JFrame {
 				}//switch end
 			}
 		});
+		addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+            	changSize(getWidth(),  getHeight());
+            }
+        });
 	}
 	
 	private int podToIldaX(int x){
